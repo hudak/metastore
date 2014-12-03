@@ -178,6 +178,11 @@ public class MetaStoreFactory<T> {
         }
       }
     }
+
+    // Load parent class attributes
+    if( parentClass.getSuperclass() != Object.class ) {
+      loadAttributes( parentObject, parentElement, parentClass.getSuperclass() );
+    }
   }
 
   private Object loadPojo( Class<?> parentClass, Object parentObject, Field field, IMetaStoreAttribute child, MetaStoreAttribute attributeAnnotation ) throws MetaStoreException {
@@ -584,6 +589,10 @@ public class MetaStoreFactory<T> {
           // TODO: support other field data types...
 
         }
+      }
+      // Save parent class attributes
+      if( parentClass.getSuperclass() != Object.class ) {
+        saveAttributes( parentElement, parentClass.getSuperclass(), parentObject );
       }
     } catch ( Exception e ) {
       throw new MetaStoreException( "Unable to save attributes of element id '" + parentElement.getId() + "', class " + parentClass.getName(), e );
