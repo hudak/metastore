@@ -10,12 +10,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
+import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.pentaho.metastore.api.IMetaStore;
 import org.pentaho.metastore.api.IMetaStoreAttribute;
 import org.pentaho.metastore.api.IMetaStoreElement;
 import org.pentaho.metastore.api.IMetaStoreElementType;
+import org.pentaho.metastore.api.exceptions.MetaStoreException;
 import org.pentaho.metastore.persist.IMetaStoreObjectFactory;
 import org.pentaho.metastore.persist.MetaStoreFactory;
 import org.pentaho.metastore.stores.memory.MemoryMetaStore;
@@ -294,6 +296,29 @@ public class MetaStoreFactoryTest extends TestCase {
     cube.setMainKpi( mainKpi );
 
     return cube;
+  }
+
+  public void testDisallowEmptyName() throws Exception {
+    IMetaStore metaStore = new MemoryMetaStore();
+    MetaStoreFactory<MyElement> factory = new MetaStoreFactory<MyElement>( MyElement.class, metaStore, "custom" );
+
+    try {
+      MyElement element = new MyElement();
+      element.setName( null );
+      factory.saveElement( element );
+      fail( "Saved illegal element (name == null)" );
+    } catch ( MetaStoreException e ) {
+      assertNotNull( e );
+    }
+
+    try {
+      MyElement element = new MyElement();
+      element.setName( "" );
+      factory.saveElement( element );
+      fail( "Saved illegal element (name.isEmpty())" );
+    } catch ( MetaStoreException e ) {
+      assertNotNull( e );
+    }
   }
 
   private List<Kpi> generateKpis() {

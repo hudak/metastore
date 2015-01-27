@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.pentaho.metastore.api.IMetaStore;
 import org.pentaho.metastore.api.IMetaStoreAttribute;
 import org.pentaho.metastore.api.IMetaStoreElement;
@@ -448,7 +449,7 @@ public class MetaStoreFactory<T> {
     //
 
     String name = (String) getAttributeValue( clazz, t, "name", "getName" );
-    if ( name == null ) {
+    if ( name == null || name.trim().length() == 0 ) {
       throw new MetaStoreException( "Unable to find name of element class object '" + t.toString() + "'" );
     }
 
